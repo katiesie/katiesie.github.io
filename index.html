@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Name</title>
+  <meta name="description" content="Your Name — Designer and Developer" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Reset & Tokens ──────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #f5f3ee;
+      --fg:     #1a1a18;
+      --muted:  #6b6860;
+      --accent: #c94f2a;   /* ← change this to swap the highlight colour */
+      --border: #dedad2;
+      --serif:  'DM Serif Display', Georgia, serif;
+      --sans:   'DM Sans', system-ui, sans-serif;
+      --mono:   'DM Mono', monospace;
+      --max-w:  680px;
+      --gap:    clamp(2.5rem, 6vw, 5rem);
+    }
+
+    html { scroll-behavior: auto; } /* JS handles scrolling */
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--sans);
+      font-size: clamp(1rem, 1.5vw, 1.0625rem);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden; /* outer body never scrolls */
+    }
+
+    a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+    a:hover { color: var(--accent); }
+    em { font-style: italic; }
+
+    /* ─── Scroll track ────────────────────────────────────────── */
+    /* This fixed div is the real scrollable viewport */
+    #scroll-track {
+      position: fixed;
+      inset: 0;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      scrollbar-width: none; /* Firefox */
+    }
+    #scroll-track::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
+    /* ─── Layout ──────────────────────────────────────────────── */
+    .container {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ─── Nav ─────────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0.9rem 0;
+    }
+
+    nav .inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.875rem;
+      text-decoration: none;
+      color: var(--muted);
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--fg); }
+
+    /* ─── Hero ────────────────────────────────────────────────── */
+    .hero {
+      padding: calc(var(--gap) * 1.5) 0 var(--gap);
+    }
+
+    .hero p {
+      font-family: var(--serif);
+      font-size: clamp(1.6rem, 4vw, 2.1rem);
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p em { color: var(--accent); font-style: italic; }
+
+    /* ─── Sections ────────────────────────────────────────────── */
+    main { padding-bottom: calc(var(--gap) * 2); }
+
+    .section {
+      padding: var(--gap) 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(1.2rem, 3vw, 1.5rem);
+      letter-spacing: -0.02em;
+      font-weight: 400;
+    }
+
+    .section-num {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    .section p + p { margin-top: 0.85em; }
+
+    /* ─── Experience ──────────────────────────────────────────── */
+    .exp-list { display: flex; flex-direction: column; gap: 1.1rem; margin-top: 0.5rem; }
+
+    .exp-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.25rem 1.5rem;
+      align-items: baseline;
+    }
+
+    .exp-role { font-weight: 500; }
+    .exp-company a { color: var(--accent); text-decoration: none; }
+    .exp-company a:hover { text-decoration: underline; }
+    .exp-years {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--muted);
+      white-space: nowrap;
+      grid-row: 1 / 3;
+      grid-column: 2;
+      align-self: center;
+    }
+    .exp-desc { font-size: 0.9rem; color: var(--muted); }
+
+    /* ─── Projects ────────────────────────────────────────────── */
+    .project-list { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem; }
+    .project-item { display: flex; align-items: baseline; gap: 0.75rem; }
+    .project-item a { font-weight: 500; text-decoration: none; }
+    .project-item a:hover { color: var(--accent); text-decoration: underline; }
+    .project-desc { font-size: 0.9rem; color: var(--muted); }
+
+    /* ─── Writing ─────────────────────────────────────────────── */
+    .writing-list { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.5rem; }
+    .writing-list li { display: flex; align-items: baseline; gap: 0.75rem; }
+    .writing-list a { text-decoration: none; font-weight: 500; }
+    .writing-list a:hover { color: var(--accent); text-decoration: underline; }
+    .writing-year { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); flex-shrink: 0; }
+
+    /* ─── Clients ─────────────────────────────────────────────── */
+    .client-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+    .client-tag {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-family: var(--mono);
+      border: 1px solid var(--border);
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .client-tag:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ─── CTA ─────────────────────────────────────────────────── */
+    .cta { margin-top: 1.25rem; font-size: 0.95rem; }
+    .cta a { font-style: italic; }
+
+    /* ─── Social ──────────────────────────────────────────────── */
+    .social-links { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-top: 0.5rem; }
+    .social-links a { text-decoration: none; font-weight: 500; font-size: 0.95rem; }
+    .social-links a:hover { color: var(--accent); }
+
+    /* ─── Footer ──────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 0;
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+
+    /* ─── Load animation (first copy only) ───────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* JS adds .is-original to the real copy; clone gets .is-clone */
+    .is-original .hero           { animation: fadeUp 0.5s ease both; }
+    .is-original .section:nth-child(1) { animation: fadeUp 0.5s 0.05s ease both; }
+    .is-original .section:nth-child(2) { animation: fadeUp 0.5s 0.10s ease both; }
+    .is-original .section:nth-child(3) { animation: fadeUp 0.5s 0.15s ease both; }
+    .is-original .section:nth-child(4) { animation: fadeUp 0.5s 0.20s ease both; }
+    .is-original .section:nth-child(5) { animation: fadeUp 0.5s 0.25s ease both; }
+
+    /* ─── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .exp-item { grid-template-columns: 1fr; }
+      .exp-years { grid-row: auto; grid-column: auto; margin-top: 0.1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="scroll-track">
+
+  <!--
+  ╔══════════════════════════════════════════════════════╗
+  ║  Edit ONLY this one .page-copy block.               ║
+  ║  JavaScript will clone it automatically at runtime. ║
+  ╚══════════════════════════════════════════════════════╝
+  -->
+  <div class="page-copy">
+
+    <!-- ── Nav ─────────────────────────────────────────── -->
+    <nav>
+      <div class="inner">
+        <!-- TODO: change "Y" to your initial -->
+        <a class="nav-logo" href="#">Y</a>
+        <ul class="nav-links">
+          <li><a href="#work">Work</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#writing">Writing</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ── Hero ─────────────────────────────────────────── -->
+    <div class="container">
+      <header class="hero">
+        <!-- TODO: your name, city, descriptors -->
+        <p>
+          I'm <strong>Your Name</strong>, a Seattle-based
+          <em>designer</em>, <em>developer</em>, and <em>problem solver</em>.
+        </p>
+      </header>
+    </div>
+
+    <!-- ── Sections ──────────────────────────────────────── -->
+    <main>
+      <div class="container">
+
+        <!-- 01 — Work -->
+        <section class="section" id="work">
+          <div class="section-header">
+            <h2 class="section-title">I build things</h2>
+            <span class="section-num">01</span>
+          </div>
+          <!-- TODO: your work history -->
+          <div class="exp-list">
+            <div class="exp-item">
+              <div class="exp-role">Senior Software Engineer @ <span class="exp-company"><a href="https://example.com" target="_blank">Acme Corp</a></span></div>
+              <div class="exp-years">2022–now</div>
+              <div class="exp-desc">Built the core infrastructure powering real-time collaboration features used by millions.</div>
+            </div>
+            <div class="exp-item">
+              <div class="exp-role">Software Engineer @ <span class="exp-company"><a href="https://example.com" target="_blank">Startup XYZ</a></span></div>
+              <div class="exp-years">2019–22</div>
+              <div class="exp-desc">Shipped the design system and component library that became the foundation of every product surface.</div>
+            </div>
+            <div class="exp-item">
+              <div class="exp-role">Frontend Developer @ <span class="exp-company"><a href="https://example.com" target="_blank">Agency Name</a></span></div>
+              <div class="exp-years">2017–19</div>
+              <div class="exp-desc">Delivered marketing sites and interactive campaigns for clients across finance, healthcare, and retail.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 02 — Projects -->
+        <section class="section" id="projects">
+          <div class="section-header">
+            <h2 class="section-title">I code for fun</h2>
+            <span class="section-num">02</span>
+          </div>
+          <!-- TODO: your projects -->
+          <div class="project-list">
+            <div class="project-item">
+              <a href="https://github.com/yourusername/project-one" target="_blank">project-one</a>
+              <span class="project-desc">A short description of what this project does and why it matters.</span>
+            </div>
+            <div class="project-item">
+              <a href="https://github.com/yourusername/project-two" target="_blank">project-two</a>
+              <span class="project-desc">Another cool thing you built — keep these concise and punchy.</span>
+            </div>
+            <div class="project-item">
+              <a href="https://github.com/yourusername/project-three" target="_blank">project-three</a>
+              <span class="project-desc">A library, tool, or experiment that scratched your own itch.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 03 — Freelance -->
+        <section class="section" id="freelance">
+          <div class="section-header">
+            <h2 class="section-title">I freelance</h2>
+            <span class="section-num">03</span>
+          </div>
+          <p>I've worked with great companies as a freelancer and consultant, helping them ship products and design systems.</p>
+          <!-- TODO: your clients -->
+          <div class="client-grid">
+            <a class="client-tag" href="https://example.com" target="_blank">Client A</a>
+            <a class="client-tag" href="https://example.com" target="_blank">Client B</a>
+            <a class="client-tag" href="https://example.com" target="_blank">Client C</a>
+            <a class="client-tag" href="https://example.com" target="_blank">Client D</a>
+            <a class="client-tag" href="https://example.com" target="_blank">Client E</a>
+          </div>
+          <!-- TODO: your email -->
+          <p class="cta">
+            I'd love to hear about your project.
+            <a href="mailto:you@example.com"><em>Let's work together →</em></a>
+          </p>
+        </section>
+
+        <!-- 04 — Writing -->
+        <section class="section" id="writing">
+          <div class="section-header">
+            <h2 class="section-title">I write words</h2>
+            <span class="section-num">04</span>
+          </div>
+          <p>I write about web development, design systems, and the tools that make building for the web better.</p>
+          <!-- TODO: your articles / talks -->
+          <ul class="writing-list">
+            <li><span class="writing-year">2024</span><a href="https://example.com" target="_blank">Your most recent article or talk title</a></li>
+            <li><span class="writing-year">2023</span><a href="https://example.com" target="_blank">Another piece you're proud of</a></li>
+            <li><span class="writing-year">2022</span><a href="https://example.com" target="_blank">A conference talk or podcast appearance</a></li>
+            <li><span class="writing-year">2021</span><a href="https://example.com" target="_blank">An older post that still holds up</a></li>
+          </ul>
+        </section>
+
+        <!-- 05 — Contact -->
+        <section class="section" id="contact">
+          <div class="section-header">
+            <h2 class="section-title">I am on the internet</h2>
+            <span class="section-num">05</span>
+          </div>
+          <!-- TODO: your social links -->
+          <div class="social-links">
+            <a href="https://github.com/yourusername" target="_blank">GitHub</a>
+            <a href="https://twitter.com/yourusername" target="_blank">Twitter</a>
+            <a href="https://linkedin.com/in/yourusername" target="_blank">LinkedIn</a>
+            <a href="https://bsky.app/profile/yourusername.bsky.social" target="_blank">Bluesky</a>
+            <a href="mailto:you@example.com">Email</a>
+          </div>
+        </section>
+
+      </div><!-- /container -->
+    </main>
+
+    <!-- ── Footer ────────────────────────────────────────── -->
+    <footer>
+      <div class="container">
+        <!-- TODO: your name -->
+        © 2025 Your Name. Built with HTML & CSS.
+      </div>
+    </footer>
+
+  </div><!-- /page-copy -->
+
+</div><!-- /scroll-track -->
+
+<script>
+  (function () {
+    const track = document.getElementById('scroll-track');
+    const original = document.querySelector('.page-copy');
+
+    // Mark the original so its CSS load-animation fires
+    original.classList.add('is-original');
+
+    // Clone it, mark as decorative for screen readers, append after original
+    const clone = original.cloneNode(true);
+    clone.classList.remove('is-original');
+    clone.classList.add('is-clone');
+    clone.setAttribute('aria-hidden', 'true');
+    track.appendChild(clone);
+
+    // Once layout is ready, wire up the infinite-scroll jump
+    function init() {
+      const copyHeight = original.offsetHeight;
+
+      track.addEventListener('scroll', function () {
+        const st = track.scrollTop;
+        // Entered the clone — jump back to the matching position in the original
+        if (st >= copyHeight) {
+          track.scrollTop = st - copyHeight;
+        }
+      }, { passive: true });
+    }
+
+    // Use requestAnimationFrame to ensure the clone is painted before we measure
+    requestAnimationFrame(() => requestAnimationFrame(init));
+  })();
+</script>
+
+</body>
+</html>
